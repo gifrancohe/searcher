@@ -1,10 +1,11 @@
-# Project Title
+# Searcher
 
 Application to search and filter properties, which allows you to search by city, price and type of property.
 
 ### Prerequisites 📋
 
-You need to have Nodejs in version v10.19.0 or higher. You also need to have npm installed on version 6.14.4 or higher.
+You need to have Nodejs in version v10.19.0 or higher. 
+You also need to have npm installed on version 6.14.4 or higher.
 
 ## Getting Started 🚀
 
