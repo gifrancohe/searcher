@@ -5,9 +5,9 @@
         self = this
         self.rangePrice(),
         self.setSearch(),
-        self.request('/init', 'GET', {})
-        .then(function(response){
-          self.initializeSelects(response)
+        self.request('searcher/init', 'GET', {})
+        .then(function (data) {
+          self.initializeSelects(data)
         })
         .catch(function(error){
           console.log("Error initializing data. Error: " + error)
@@ -23,8 +23,8 @@
           grid: false,
           min: 0,
           max: 100000,
-          from: 1000,
-          to: 20000,
+          from: 0,
+          to: 100000,
           prefix: "$"
         })
       },
@@ -39,18 +39,29 @@
           $('#personalizada').toggleClass('invisible')
         })
       },
-      request: (url, method, data) => {
-        const response = await fetch(url, {
-          method: method,
-          mode: 'same-origin',
-          cache: 'no-cache',
-          credentials: "same-origin",
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        })
-        return response.json()
+      request: async function (url, method, data) {
+        let config = {}
+        switch (method) {
+          case 'POST':
+            config = {
+              method: method,
+              mode: 'same-origin',
+              cache: 'no-cache',
+              credentials: "same-origin",
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+            }
+            break;
+          default:
+            config = {
+              mode: 'cors'
+            }
+            break;
+        }
+        const response =  await fetch(url, config);
+        return response.json();
       },
       initializeSelects: (data) => {
         var citySelect = $('#ciudad')
@@ -76,8 +87,8 @@
             min: range.result.from
           }
         }
-        data = {data: JSON.stringify(data)}
-        this.request('/filter','POST', data)
+        let objson = {data: JSON.stringify(data)}
+        this.request('searcher/filter','POST', objson)
         .then(function(response){
           self.showResults(response)
         })
@@ -86,13 +97,21 @@
         })
       },
       showResults: function(data) {
+        console.log(data.length)
         var self = this
-        var list = $('.list')
+        var list = $('.lista')
         list.empty()
-        data,map(function(item, index){
+        list.append(`<div class="card horizontal">
+        <div class="card-stacked">
+          <div class="card-content">
+            <h5>Resultados encontrados: ${data.length}</h5>
+          </div>
+        </div>
+      </div>`)
+        data.map(function(item, index){
           let card = `<div class="card horizontal">
           <div class="card-image">
-            <img src="images/home.jpg">
+            <img src="img/home.jpg">
           </div>
           <div class="card-stacked">
             <div class="card-content">
@@ -100,13 +119,13 @@
                 <b>Direccion: </b><p>${item.Direccion}</p>
               </div>
               <div>
-                <b>Ciudad: </b><p>${item.City}</p>
+                <b>Ciudad: </b><p>${item.Ciudad}</p>
               </div>
               <div>
                 <b>Telefono: </b><p>${item.Telefono}</p>
               </div>
               <div>
-                <b>Código postal: </b><p>${item.Codigo_postal}</p>
+                <b>Código postal: </b><p>${item.Codigo_Postal}</p>
               </div>
               <div>
                 <b>Precio: </b><p>${item.Precio}</p>
@@ -120,7 +139,7 @@
             </div>
           </div>
         </div>`;
-          list.append
+          list.append(card)
         })
       }
     }

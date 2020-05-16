@@ -1,7 +1,7 @@
 var     express = require('express'),
         Router  = express.Router()
 
-var getData = require('getData.js')
+var getData = require('./getData.js')
 
 Router.get('/init', (req, res) => {
     getData.getInitValues()
@@ -16,8 +16,7 @@ Router.get('/init', (req, res) => {
 })
 
 Router.post('/filter', (req, res) => {
-    var data = JSON.parse(req.body.data)
-    getData.getFilter(data)
+    getData.getFilter(req.body.data)
     .then(function(result){
         res.json(result)
     })

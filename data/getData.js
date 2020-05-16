@@ -20,6 +20,7 @@ module.exports = {
         })
     },
     getFilter: (data) => {
+        data = JSON.parse(data)
         return new Promise(function(resolve, reject){
             fs.readFile(dataPath, 'utf8', function(err, readData) {
                 if(err) reject(err)
@@ -38,11 +39,11 @@ module.exports = {
                         }
                     }
                     //Price validation is done
-                    if(flag && data.price != "") {
-                        if(data.price.min <= item.price && data,price.max >= item.price) {
-                            flag = false;
-                        }
+                    let price = Number(item.Precio.replace(/[^0-9.-]+/g,""));
+                    if(flag && !(data.price.min <= price && data.price.max >= price)) {
+                        flag = false
                     }
+                    
                     return flag;
                 })
                 resolve(result)
